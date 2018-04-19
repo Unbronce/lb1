@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 })
 
 router.get("/start", (req, res) => {
-  res.render("start.html")
+  res.send("start")
 })
 
 router.get("/upload", (req, res) => {
