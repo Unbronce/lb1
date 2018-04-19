@@ -1,35 +1,39 @@
-const express = require("express")
+const express = require("express");
 
-const formidable = require('formidable')
+const formidable = require("formidable");
+const path = require("path");
 
-const fs = require('fs');
+const fs = require("fs");
 
-const app = express()
+const app = express();
+const sys = require("sys");
 
-const router = express.Router();
+// app.use(express.static("./pages"));
 
-app.listen(8080, () => console.log("server listen on port 8080"))
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname + "/pages/index.html"));
+});
 
-app.use(express.static(__dirname));
+app.get("/start", (req, res) => {
+  res.sendFile(__dirname + "/pages/start.html");
+});
 
-router.get("/", (req, res) => {
-  res.send("index")
-})
+app.get("/upload", (req, res) => {
+  res.sendFile(__dirname + "/pages/upload.html");
+});
 
-router.get("/start", (req, res) => {
-  res.render("start.html")
-})
-
-router.get("/upload", (req, res) => {
-  res.render("upload.html")
-})
-
-router.post("/upload", (req,res) => {
+app.post("/upload", (req, res) => {
   const form = new formidable.IncomingForm();
-  res.send(form)
-})
+  form.uploadDir = __dirname + "/uploadings";
+  form.keepExtensions = true;
+  const parsed = form.parse(req, function(err, fields, files) {
+    res.sendFile(files.opensmt.path);
+  });
+  return;
+});
 
-router.get("*", (req, res) => {
-  res.render("index.html")
-})
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/pages/index.html"));
+});
 
+app.listen(8080, () => console.log("server listen on port 8080"));
